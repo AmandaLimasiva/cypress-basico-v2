@@ -17,7 +17,7 @@ describe('Central de Atendimento ao Cliente TAT', function(){
         cy.get('#lastName').type('Lima')
         cy.get('#email').type('amandalimasiva@gmail.com')
         cy.get('#open-text-area').type(logText, {delay: 0})//Melhorar o tempo do teste 
-        cy.get('button[type="submit"]').click()
+        cy.contains('button', 'Enviar').click() //Botão que tem o texto Enviar
 
         cy.get('.success').should('be.visible')
     })
@@ -27,8 +27,8 @@ describe('Central de Atendimento ao Cliente TAT', function(){
 
         cy.get('#firstName').type('Amanda')
         cy.get('#lastName').type('Lima')
-        cy.get('#email').type('amandalimasiva.gmail.com')
-        cy.get('button[type="submit"]').click()
+        cy.get('#email').type('amandalimasiva.gmail.com')// Email inválido
+        cy.contains('button', 'Enviar').click()
 
         cy.get('.error').should('be.visible')
     })
@@ -56,14 +56,14 @@ describe('Central de Atendimento ao Cliente TAT', function(){
         cy.get('#open-text-area').type(logText, {delay: 0})//Melhorar o tempo do teste 
 
         //Envia o forms
-        cy.get('button[type="submit"]').click()
+        cy.contains('button', 'Enviar').click()
 
         cy.get('.error').should('be.visible')//Valida
 
         //Não adicionar o campo telefone de propósito
     })
 
-    it.only('preenche e limpa os campos nome, sobrenome, email e telefone', function(){
+    it('preenche e limpa os campos nome, sobrenome, email e telefone', function(){
         //Nome
         cy.get('#firstName')
             .type('Amanda')
@@ -88,6 +88,20 @@ describe('Central de Atendimento ao Cliente TAT', function(){
             .should('have.value', '11946258963')
                 .clear()
                     .should('have.value', '')
+    })
+
+    it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios.', function(){
+
+        cy.contains('button', 'Enviar').click()
+        cy.get('.error').should('be.visible')
+    })
+
+    //Comandos custumizados - UAU
+
+    it('envia o formuário com sucesso usando um comando customizado', function(){
+        cy.fillMandatoryFieldsAndSubmit()
+
+        cy.get('.success').should('be.visible')
     })
 
 })
