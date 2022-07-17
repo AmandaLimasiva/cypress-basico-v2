@@ -52,7 +52,7 @@ describe('Central de Atendimento ao Cliente TAT', function(){
         cy.get('#firstName').type('Amanda')
         cy.get('#lastName').type('Lima')
         cy.get('#email').type('amandalimasiva@gmail.com')
-        cy.get('#phone-checkbox').click()
+        cy.get('#phone-checkbox').check()
         cy.get('#open-text-area').type(logText, {delay: 0})//Melhorar o tempo do teste 
 
         //Envia o forms
@@ -133,15 +133,57 @@ describe('Central de Atendimento ao Cliente TAT', function(){
             .should('have.value', 'feedback')
     })
 
-
-
-    it.only('Marca cada tipo de atendimento', function(){
+    it('Marca cada tipo de atendimento', function(){
         cy.get('input[type ="radio"]')
             .should('have.length', 3)
                 .each(function($radio){
                     cy.wrap($radio).check()
                     cy.wrap($radio).should('be.checked')
                 })
+    })
+
+    it('marca ambos checkboxes, depois desmarca o último', function(){
+        cy.get('input[type="checkbox"]')
+        .check()
+        .last()
+        .uncheck()
+        .should('not.be.checked')
+        //cy.get('#email-checkbox').check() cy.get('input[type="checkbox"]').
+            //.should('have.value', 'email')
+        //cy.get('#email-checkbox').uncheck()
+
+    })
+
+    it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function(){
+
+    })
+    
+    it('seleciona um arquivo da pasta fixtures', function(){
+        cy.get('input[type="file"]')//'//cy.get('#file-upload')
+            .should('not.have.value')
+                .selectFile('./cypress/fixtures/example.json')
+                    .should(function($input){
+                        expect($input[0].files[0].name).to.equal('example.json')
+                    })
+    })
+    
+    //drag-drop - Arrastando de outra janela
+    it('seleciona um arquivo simulando um drag-and-drop', function(){
+        cy.get('input[type="file"]')//'//cy.get('#file-upload')
+            .should('not.have.value')
+                .selectFile('./cypress/fixtures/example.json', {action: 'drag-drop'})
+                    .should(function($input){
+                        expect($input[0].files[0].name).to.equal('example.json')
+                    })
+    })
+
+    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', function(){
+        cy.fixture('example.json').as('sampleFile')
+        cy.get('input[type="file"]')
+            .selectFile('@sampleFile')
+            .should(function($input){
+                expect($input[0].files[0].name).to.equal('example.json')
+            })
     })
 
 })
